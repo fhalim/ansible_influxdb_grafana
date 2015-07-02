@@ -1,0 +1,28 @@
+- name: Copy over riemann jar
+  copy: src=riemann-0.2.9-SNAPSHOT-standalone.jar dest=/usr/lib/riemann-standalone.jar
+  sudo: true
+- name: Crate riemann user
+  user: name=riemann system=true
+  sudo: true
+- name: Create riemann logs directory
+  file: path=/var/log/riemann state=directory owner=riemann mode=0755
+  sudo: true
+- name: Create riemann config
+  template: src=riemann-config.clj dest=/etc/riemann-config.clj
+  sudo: true
+- name: Create supervisord config
+  ini_file:
+    dest=/etc/supervisord.conf
+    section=program:riemann
+    option="{{ item.key }}"
+    value="{{ item.value }}"
+  with_dict:
+    command: java -jar /usr/lib/riemann-standalone.jar /etc/riemann-config.clj
+    user: riemann
+    redirect_stderr: true
+    stdout_logfile: /tmp/riemann-out.log
+    directory: /tmp
+  sudo: true
+- name: Start up supervisord
+  service: name=supervisord state=reloaded
+  sudo: true

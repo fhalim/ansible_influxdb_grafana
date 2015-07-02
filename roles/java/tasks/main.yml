@@ -1,0 +1,20 @@
+- name: Add zulu repo
+  get_url: url="http://repos.azulsystems.com/rhel/zulu.repo" dest="/etc/yum.repos.d/zulu.repo"
+  sudo: true
+  when: oracle_jdk is not defined
+- name: Install zulu
+  yum: name=zulu-8 state=present
+  sudo: true
+  when: oracle_jdk is not defined
+
+# Install Oracle JDK
+- name: Download JDK
+  command: 'wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u31-b13/jdk-8u31-linux-x64.rpm -O /tmp/jdk-8.rpm'
+  args:
+    creates: /tmp/jdk-8.rpm
+  sudo: true
+  when: oracle_jdk is defined
+- name: Install RPM
+  yum: name=/tmp/jdk-8.rpm state=present
+  sudo: true
+  when: oracle_jdk is defined

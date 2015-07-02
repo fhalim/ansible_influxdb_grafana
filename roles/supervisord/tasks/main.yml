@@ -1,0 +1,3 @@
+- name: Install supervisord
+  yum: name=supervisor
+  sudo: true

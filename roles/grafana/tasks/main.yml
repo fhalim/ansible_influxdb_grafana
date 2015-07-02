@@ -1,0 +1,17 @@
+- name: Install nginx
+  yum: name=http://nginx.org/packages/rhel/6/x86_64/RPMS/nginx-1.6.2-1.el6.ngx.x86_64.rpm state=present
+  sudo: true
+- name: Start
+  service: name=nginx state=started
+  sudo: true
+- name: Download grafana
+  get_url: url="{{grafana_tarball}}" dest="/tmp/grafana.tar.gz"
+- name: Unzip grafana
+  unarchive: copy=no src=/tmp/grafana.tar.gz dest="{{www_base_dir}}"
+  sudo: true
+- name: Create symlink
+  file: state=link src="{{www_base_dir}}/{{grafana_basedir}}" dest="{{www_base_dir}}/grafana"
+  sudo: true
+- name: Create config file
+  template: src="config.js" dest="{{www_base_dir}}/{{grafana_basedir}}/config.js"
+  sudo: true

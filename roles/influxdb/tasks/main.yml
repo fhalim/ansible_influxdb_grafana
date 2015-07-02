@@ -1,0 +1,14 @@
+- name: Install package
+  yum: name="{{influxdb_rpm}}"
+  sudo: true
+- name: Start service
+  service: name=influxdb state=restarted
+  sudo: true
+- name: Create metrics user
+  script: create_metrics_db.sh
+- name: Create Monit config
+  copy: src=monit_influxdb.conf dest=/etc/monit.d/monit_influxdb.conf
+  sudo: true
+- name: Restart monit
+  service: name=supervisord state=restarted
+  sudo: true

@@ -1,0 +1,3 @@
+www_base_dir: /usr/share/nginx/html
+grafana_tarball: http://grafanarel.s3.amazonaws.com/grafana-1.9.1.tar.gz
+grafana_basedir: grafana-1.9.1
